@@ -1,7 +1,6 @@
 import argparse
 import polars as pl
 import phonenumbers as pn
-import pprint as pp
 
 # list of questions to include in the roster report
 ROSTER_QUESTIONS = [
