@@ -1,0 +1,4 @@
+phonenumbers==9.0.32
+polars==1.41.2
+polars-runtime-32==1.41.2
+-e git+https://github.com/cmbz/pybits.git@f757c63f7a854df0897f9ffcbf2786e1ee944ae0#egg=pybits
