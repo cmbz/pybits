@@ -2,6 +2,13 @@ import argparse
 import polars as pl
 import phonenumbers as pn
 
+# list of required columns
+REQUIRED_COLUMNS = [
+    "Sales Order Item\\Sales Order Item Ticket\\Sales Order Item Ticket Registrant\\Registrant\\Name",
+    "Sales Order Item\\Sales Order Item Ticket\\Sales Order Item Ticket Registrant\\Registrant\\Registration Information\\Question",
+    "Sales Order Item\\Sales Order Item Ticket\\Sales Order Item Ticket Registrant\\Registrant\\Registration Information\\Response"
+]
+
 # list of questions to include in the roster report
 ROSTER_QUESTIONS = [
     'Child\'s Last Name',
@@ -45,6 +52,25 @@ def parse_phone_number(phone_number):
     phone_number = pn.parse(phone_number, 'US')
     return pn.format_number(phone_number, pn.PhoneNumberFormat.INTERNATIONAL)
 
+def validate_input_file(df, required_columns=REQUIRED_COLUMNS):
+    """
+    Validate the input file to ensure it contains the required columns.
+
+    Parameters
+    ----------
+    df : pl.DataFrame
+        The input DataFrame to be validated.
+
+    Raises
+    ------
+    ValueError
+        If the required columns are not present in the DataFrame.
+    """    
+    missing_columns = [col for col in required_columns if col not in df.columns]
+    
+    if missing_columns:
+        raise ValueError(f"Input file is missing the following required columns: {', '.join(missing_columns)}")
+
 def main():
     """
     Create camper reports from an input file containing 
@@ -73,6 +99,10 @@ def main():
 
     # read the input file and pivot the data to create the camper report
     df = pl.read_csv(filename)
+
+    # validate the input file to ensure it contains the required columns
+    # raises a ValueError if any required columns are missing
+    validate_input_file(df)
 
     # rename the columns to match the expected format
     df = df = df.rename({
