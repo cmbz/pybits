@@ -35,6 +35,44 @@ PHONE_NUMBER_QUESTIONS = [
     'Emergency Contact Phone'
 ]
 
+# preferred column order for the full camper report
+PREFERRED_COLUMN_ORDER = [
+    'Name',
+    'Child\'s Last Name',
+    'Child\'s First Name',
+    'Gender',
+    'Child\'s Age',
+    'Entering Grade',
+    'Allergies',
+    'EPI-PEN?',
+    'Returning Camper?',
+    'T-Shirt Size',
+    '1st Parent/Guardian Contact Information Last Name',
+    '1st Parent/Guardian Contact Information First Name',
+    '1st Parent/Guardian Contact Information Phone',
+    '1st Parent/Guardian Contact Information Email',
+    '2nd Parent/Guardian Contact Information Last Name',
+    '2nd Parent/Guardian Contact Information First Name',
+    '2nd Parent/Guardian Contact Information Phone',
+    '2nd Parent/Guardian Contact Information Email',
+    '1st Authorized Adult Contact Details Last Name',
+    '1st Authorized Adult Contact Details First Name',
+    '1st Authorized Adult Contact Details Phone',
+    '1st Authorized Adult Contact Details Phone 2',
+    '1st Authorized Adult Relationship to Child',
+    '2nd Authorized Adult Contact Details Last Name',
+    '2nd Authorized Adult Contact Details First Name',
+    '2nd Authorized Adult Contact Details Phone',
+    '2nd Authorized Adult Contact Details Phone 2',
+    '2nd Authorized Adult Relationship to Child',
+    'Emergency Contact Last Name',
+    'Emergency Contact First Name',
+    'Emergency Contact Phone',
+    'Emergency Contact Phone 2',
+    'Child\'s Physician Name or Office',
+    'Child\'s Physician Phone Number',
+]
+
 def parse_phone_number(phone_number):
     """
     Parse a phone number into a consistent format.
@@ -124,6 +162,9 @@ def main():
         df = df.with_columns(
             pl.col(question).map_elements(parse_phone_number).alias(question)
         )
+
+    # reorder the columns in the full camper report according to the preferred column order
+    df = df.select([col for col in PREFERRED_COLUMN_ORDER if col in df.columns])
 
     # write the full camper report to a CSV file
     df.write_csv("camper_report_full.csv")
