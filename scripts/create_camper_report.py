@@ -27,6 +27,8 @@ ROSTER_QUESTIONS = [
 PHONE_NUMBER_QUESTIONS = [
     '1st Authorized Adult Contact Details Phone',
     '1st Parent/Guardian Contact Information Phone',
+    '1st Authorized Adult Contact Details Phone 2',
+    'Emergency Contact Phone 2',
     '2nd Authorized Adult Contact Details Phone',
     '2nd Parent/Guardian Contact Information Phone',
     'Child\'s Physician Phone Number',
