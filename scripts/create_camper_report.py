@@ -89,7 +89,9 @@ def parse_phone_number(phone_number):
     if phone_number is None or phone_number == '':
         return ''
     
-    phone_number = pn.parse(phone_number, 'US')
+    try:
+        phone_number = pn.parse(phone_number, 'US')
+    except: return phone_number
     return pn.format_number(phone_number, pn.PhoneNumberFormat.INTERNATIONAL)
 
 def validate_input_file(df, required_columns=REQUIRED_COLUMNS):
@@ -138,24 +140,25 @@ def main():
     filename = args.filename
 
     # read the input file and pivot the data to create the camper report
-    df = pl.read_csv(filename)
+    df = pl.read_csv(filename, encoding='utf-8')
 
     # validate the input file to ensure it contains the required columns
     # raises a ValueError if any required columns are missing
     validate_input_file(df)
 
-    # rename the columns to match the expected format
-    df = df = df.rename({
-        "Sales Order Item\\Sales Order Item Ticket\\Sales Order Item Ticket Registrant\\Registrant\\Name": "Name",
-        "Sales Order Item\\Sales Order Item Ticket\\Sales Order Item Ticket Registrant\\Registrant\\Registration Information\\Question": "Question",
-        "Sales Order Item\\Sales Order Item Ticket\\Sales Order Item Ticket Registrant\\Registrant\\Registration Information\\Response": "Response", 
+    # rename the columns in the file to match the expected format
+    columns = list(df.columns)    
+    df = df.rename({
+        columns[0]: "Name",
+        columns[1]: "Question",
+        columns[2]: "Response", 
     })
 
     # drop queryid column
     df = df.drop('QUERYRECID')
 
     # pivot the data to create the report dataset
-    df = df.pivot(on='Question', index=['Name'], values='Response')
+    df = df.pivot(on='Question', index=['Name'], values='Response', aggregate_function='first')
 
     # parse phone numbers into a consistent format  
     for question in PHONE_NUMBER_QUESTIONS:
